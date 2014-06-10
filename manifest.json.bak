@@ -1,0 +1,25 @@
+{
+"manifest_version": 2,
+  "name": "网页对比助手",
+  "version": "1.0",
+  "description": "网页对比助手,自动对比网页和上一次浏览该网页时的差别，标注出更新的内容.",
+  "icons": { "128": "icon.png" },
+  "background": {
+    "persistent": false,
+    "scripts": ["bg.js"]
+  },
+  "permissions": ["<all_urls>", "storage"],
+  "page_action": {
+    "default_title": "网页对比助手",
+    "default_icon":  {"19": "icon.png"},   
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],"run_at":"document_end"
+    }
+  ],
+  "options_page": "options.html"
+}
