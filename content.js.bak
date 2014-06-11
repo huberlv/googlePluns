@@ -2,6 +2,7 @@
 function displyUpdate(dom){
 	 dom.style.color="#FF0000";
 	 dom.style.textDecoration="overline";
+	 dom.style.backgroundColor="#00FF00";
 }
 chrome.storage.sync.get(personalFocus_oldLinks,function(valueArray) {
 
@@ -23,7 +24,7 @@ chrome.storage.local.get(personalFocus_oldLinks, function(valueArray) {
 		console.log("oldLinks:"+oldLinks);
 		var updateNum=0;
 		for(var i=0;i<links.length;i++){
-		     newLinks[links[i].innerText]=links[i];
+		     newLinks[links[i].innerText]="";
 			 if(exists){
                  if( oldLinks[links[i].innerText]==undefined){ 
 					 displyUpdate(links[i]);

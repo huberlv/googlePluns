@@ -1,7 +1,8 @@
 
 function displyUpdate(dom){
-	 dom.style.color="#FF0000";
-	 dom.style.textDecoration="overline";
+	// dom.style.color="#FF0000";
+	// dom.style.textDecoration="overline";
+	 dom.style.backgroundColor="#00FF00";
 }
 chrome.storage.sync.get(personalFocus_oldLinks,function(valueArray) {
 

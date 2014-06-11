@@ -1,7 +1,7 @@
+alert(111);
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 
 	if(request.cmd=='displayUpdate'){
-		alert(request.updateNum);
 		chrome.browserAction.setBadgeText({text:request.updateNum});
 		
 	}
