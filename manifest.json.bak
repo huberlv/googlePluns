@@ -9,16 +9,16 @@
     "scripts": ["bg.js"]
   },
   "permissions": ["<all_urls>", "storage"],
-  "page_action": {
+  "browser_action": {
     "default_title": "网页对比助手",
-    "default_icon":  {"19": "icon.png"},   
+    "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],"run_at":"document_end"
+      "js": ["content.js","jquery.js"],"run_at":"document_end"
     }
   ],
   "options_page": "options.html"
