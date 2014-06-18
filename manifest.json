@@ -8,7 +8,7 @@
     "persistent": false,
     "scripts": ["bg.js"]
   },
-  "permissions": ["<all_urls>", "storage"],
+  "permissions": ["<all_urls>", "storage","tabs","http://*/","https://*/"],
   "browser_action": {
     "default_title": "网页对比助手",
     "default_icon": "icon.png",
