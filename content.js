@@ -1,6 +1,9 @@
 //是否对比链接 fixme 需入从配置读取
 var compareLink=true;
 var backgroundColor="rgb(0, 255, 0)";
+//链接的key
+var personalFocus_oldContent=null;
+var personalFocus_oldContent_temp=null;
 
 if(!window.localStorage){
 	alert('This browser does NOT support localStorage');
@@ -26,11 +29,12 @@ function clear(){
 	localStorage.clear();
 }
 
-//链接的key
-var personalFocus_oldContent=encodeURIComponent("personalFocus_oldContent:"+window.location.href);
-var personalFocus_oldContent_temp=encodeURIComponent("personalFocus_oldContent_temp:"+window.location.href);
+function setConfig(url){
+	personalFocus_oldContent=encodeURIComponent("personalFocus_oldContent:"+url);
+	personalFocus_oldContent_temp=encodeURIComponent("personalFocus_oldContent_temp:"+url);
+}
 //主方法，对比网页内容
-function compare() {
+function compare(vdocument) {
         console.log("*****start personalFocus******"); 	 
 		var oldContenttr=localStorage.getItem(personalFocus_oldContent);
 
@@ -42,7 +46,7 @@ function compare() {
 		var oldContent=JSON.parse(''+oldContenttr);
 		console.log("visited:"+exists);
 		console.log("oldContent:"+oldContent);
-		var content=getContentToCompare();
+		var content=getContentToCompare(vdocument);
 		var newContent=new Object();
 		
 		var updateNum=0;
@@ -61,19 +65,19 @@ function compare() {
 		if(!exists){
 			read();
 		}
-		console.log("*****end personalFocus******"); 	  
-		sendUpdateMessage(updateNum);
+		console.log("*****end personalFocus******"); 
+		return updateNum+"";
 }
 /**
  * 获取需要对比的dom节点
  * @param select
  * @returns
  */
-function getContentToCompare(){
+function getContentToCompare(vdocument){
 	var select="";
 	var content=null;
 	if(select==""){
-		content=document.body.getElementsByTagName("a");
+		content=vdocument.getElementsByTagName("a");
 	}
 	
 	return content;
@@ -95,15 +99,21 @@ function sendUpdateMessage(updateNum){
 		 console.log("content response:"+response); 	  
 	});
 }
-compare();
 //当窗口重新选取时再对比内容
 var sourceOnfocus=window.sourceOnfocus;
 window.onfocus=function() {
-    compare();
+	cmonitor(document);
     if(sourceOnfocus!=undefined){
     	sourceOnfocus();
     }
 }
+function cmonitor(vdocument){
+	setConfig(window.location.href);
+	var updateNum=compare(vdocument);
+	sendUpdateMessage(updateNum);
+}
+cmonitor(document);
+
 //***********fixme 需要实现事件
 document.body.onclick=read;
 

@@ -6,7 +6,7 @@
   "icons": { "128": "icon.png" },
   "background": {
     "persistent": false,
-    "scripts": ["bg.js"]
+    "scripts": ["content.js","bg.js"]
   },
   "permissions": ["<all_urls>", "storage","tabs","http://*/","https://*/"],
   "browser_action": {
@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["jquery.js","content.js"],"run_at":"document_end"
+      "js": ["content.js"],"run_at":"document_end"
     }
   ],
   "options_page": "options.html"
