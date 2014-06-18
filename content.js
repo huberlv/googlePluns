@@ -86,14 +86,20 @@ function getContentToCompare(vdocument){
 function read(){
 	var temp=localStorage.getItem(personalFocus_oldContent_temp);
 	if(temp!=null){
+		var content=getContentToCompare();
+		for(var i=0;i<content.length;i++){
+			restUpdate(content[i]);
+		}
 		localStorage.setItem(personalFocus_oldContent,temp);
-	}
-	var content=getContentToCompare();
-	for(var i=0;i<content.length;i++){
-		restUpdate(content[i]);
-	}
-	
+		bgRead(personalFocus_oldContent,temp);
+	}	
 }
+function bgRead(key,value){
+	chrome.extension.sendMessage({cmd: "bgRead",'key':key,'value':value},function(response) {
+		 console.log("content response:"+response); 	  
+	});
+}
+
 function sendUpdateMessage(updateNum){
 	chrome.extension.sendMessage({cmd: "displayUpdate",'updateNum':updateNum+""},function(response) {
 		 console.log("content response:"+response); 	  

@@ -4,6 +4,10 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	if(request.cmd=='displayUpdate'){
 		displayUpdate(request.updateNum);
 	}
+	if(request.cmd=='bgRead'){
+		localStorage.setItem(request.key,request.value);
+	}
+	
 });
 
 function displayUpdate(updateNum){
