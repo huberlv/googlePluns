@@ -20,7 +20,7 @@ function displayUpdate(updateNum){
 //window.open('http://localhost:8080/personalfocus/index.jsp','_blank','height=0,width=0,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no,alwaysLowered=no,z-look=no')
 function monitor(){
 	var xhr = new XMLHttpRequest();
-	var url="http://localhost:8080/personalfocus/index.jsp";
+	var url="http://localhost:8080/personalfocus/index/showindex";
 	xhr.open("GET",url , true);
 	xhr.onreadystatechange = function() {
 	  if (xhr.readyState == 4) {

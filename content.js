@@ -12,15 +12,14 @@ if(!window.localStorage){
 function displyUpdate(dom){
 	// dom.style.color="#FF0000";
 	 //dom.style.textDecoration="overline";
-	 dom.style.backgroundColor_s=dom.style.backgroundColor==undefined?"":dom.style.backgroundColor;
 	 dom.style.backgroundColor=backgroundColor;
 }
 
 function restUpdate(dom){
 	// dom.style.color="#FF0000";
 	 //dom.style.textDecoration="overline";
-	if(dom.style.backgroundColor_s!=undefined){
-	   dom.style.backgroundColor=dom.style.backgroundColor_s;
+	if(dom.style.backgroundColor==backgroundColor){
+	   dom.style.backgroundColor="";
 	}
 }
 
@@ -86,7 +85,7 @@ function getContentToCompare(vdocument){
 function read(){
 	var temp=localStorage.getItem(personalFocus_oldContent_temp);
 	if(temp!=null){
-		var content=getContentToCompare();
+		var content=getContentToCompare(document);
 		for(var i=0;i<content.length;i++){
 			restUpdate(content[i]);
 		}
