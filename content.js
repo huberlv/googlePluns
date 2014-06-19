@@ -93,6 +93,7 @@ function read(){
 		bgRead(personalFocus_oldContent,temp);
 	}	
 }
+//未处理多个页面请求时被忽略的问题 fixme
 function bgRead(key,value){
 	chrome.extension.sendMessage({cmd: "bgRead",'key':key,'value':value},function(response) {
 		 console.log("content response:"+response); 	  
@@ -117,6 +118,14 @@ function cmonitor(vdocument){
 	var updateNum=compare(vdocument);
 	sendUpdateMessage(updateNum);
 }
+
+function sendAddMonitorMessage(url,path,title,moduleName){
+	chrome.extension.sendMessage({cmd: "addMonitor",'url':url,'path':path,'title':title,'moduleName':moduleName},function(response) {
+		 console.log("content response:"+response); 	  
+	});
+}
+//fixme 需要增加动作来增加监控，路径监控还未实现
+sendAddMonitorMessage(window.location.href,"body",document.head.title,"");
 cmonitor(document);
 
 //***********fixme 需要实现事件
