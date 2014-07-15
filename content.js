@@ -3,7 +3,6 @@ var compareLink=true;
 var backgroundColor="rgb(0, 255, 0)";
 //链接的key
 var personalFocus_oldContent=null;
-var personalFocus_oldContent_temp=null;
 
 if(!window.localStorage){
 	alert('This browser does NOT support localStorage');
@@ -30,7 +29,6 @@ function clear(){
 
 function setConfig(url){
 	personalFocus_oldContent=encodeURIComponent("personalFocus_oldContent:"+url);
-	personalFocus_oldContent_temp=encodeURIComponent("personalFocus_oldContent_temp:"+url);
 }
 //主方法，对比网页内容
 function compare(vdocument) {
@@ -42,30 +40,36 @@ function compare(vdocument) {
 		if(oldContenttr!=undefined){
 			exists=true;
 		}
+		if(!exists){
+			read(vdocument);
+			return;
+		}
 		var oldContent=JSON.parse(''+oldContenttr);
 		console.log("visited:"+exists);
 		console.log("oldContent:"+oldContent);
 		var content=getContentToCompare(vdocument);
 		var newContent=new Object();
-		
 		var updateNum=0;
 		for(var i=0;i<content.length;i++){
 			 var compareContent=content[i].innerText;
 			 compareContent=compareLink?compareContent+(content[i].href==undefined?"":content[i].href):compareContent;
-		     newContent[compareContent]="";
-			 if(exists){
-                 if( oldContent[compareContent]==undefined){ 
-					 displyUpdate(content[i]);
-					 updateNum++;
-				 }
+             if( oldContent[compareContent]==undefined){ 
+				 displyUpdate(content[i]);
+				 updateNum++;
 			 }
-		}
-		localStorage.setItem(personalFocus_oldContent_temp,JSON.stringify(newContent));
-		if(!exists){
-			read();
 		}
 		console.log("*****end personalFocus******"); 
 		return updateNum+"";
+}
+function getCurrentContent(vdocument){
+	var content=getContentToCompare(vdocument);
+	var newContent=new Object();
+	for(var i=0;i<content.length;i++){
+		 var compareContent=content[i].innerText;
+		 compareContent=compareLink?compareContent+(content[i].href==undefined?"":content[i].href):compareContent;
+	     newContent[compareContent]="";
+	}
+	return newContent;
 }
 /**
  * 获取需要对比的dom节点
@@ -82,16 +86,16 @@ function getContentToCompare(vdocument){
 	return content;
 }
 
-function read(){
-	var temp=localStorage.getItem(personalFocus_oldContent_temp);
-	if(temp!=null){
-		var content=getContentToCompare(document);
-		for(var i=0;i<content.length;i++){
-			restUpdate(content[i]);
-		}
-		localStorage.setItem(personalFocus_oldContent,temp);
-		bgRead(personalFocus_oldContent,temp);
-	}	
+function read(vdocument){
+	var currentContent=getCurrentContent(vdocument)
+	var content=getContentToCompare(document);
+	for(var i=0;i<content.length;i++){
+		restUpdate(content[i]);
+	}
+	var temp=JSON.stringify(currentContent);
+	localStorage.setItem(personalFocus_oldContent,temp);
+	bgRead(personalFocus_oldContent,temp);
+
 }
 //未处理多个页面请求时被忽略的问题 fixme
 function bgRead(key,value){
@@ -124,11 +128,20 @@ function sendAddMonitorMessage(url,path,title,moduleName){
 		 console.log("content response:"+response); 	  
 	});
 }
+function cread(){
+	read(document);
+}
+
+//***********fixme 需要实现事件
+document.body.onclick=cread;
+
 //fixme 需要增加动作来增加监控，路径监控还未实现
 sendAddMonitorMessage(window.location.href,"body",document.head.title,"");
 cmonitor(document);
 
-//***********fixme 需要实现事件
-document.body.onclick=read;
+chrome.extension.sendMessage({cmd: "checkIfMonitorByBrowser"},function(response) {
+	 console.log("content response:"+response); 	  
+});
+
 
 

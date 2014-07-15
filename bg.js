@@ -1,11 +1,13 @@
 /**
  * monitorInfos:{url1:{path1:{url,path,title,moduleName}}}
  */
-var monitorTime=5000;
+var monitorTime=2000;
 var key_monitorInfos='monitorInfos';
 var currentIndex=0;
 var monitorType_xml='XMLHttpRequest';
-var monitorType=monitorType_xml;
+var monitorType_browser='browser';
+var monitorType=monitorType_browser;
+var tabId=-1;
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 	try{
 		if(request.cmd=='displayUpdate'){
@@ -17,10 +19,17 @@ chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
 		if(request.cmd=='addMonitor'){
 			addMonitor(request);
 		}
+		if(request.cmd=='checkIfMonitorByBrowser'){
+			if(sender.tab.index ==0&&sender.tab.pinned ==true){//如果是第0个固定标签，则用于监控
+				tabId=sender.tab.id;
+				monitorByBrowser();
+//				sendResponse({'response': "ok"});
+			}
+		}
 	}catch(e){
 		console.log(e);
 	}
-	sendResponse({'response': "ok"});
+	
 });
 
 function addMonitor(monitorInfo){
@@ -66,8 +75,15 @@ function monitor(){
 	}
 	if(monitorType==monitorType_xml){
 		monitorByXMLHttpRequest(url);
+	}else{
+		initMonitorByBrowser(url);
 	}
 }
+
+function initMonitorByBrowser(url){
+	chrome.tabs.create({'url':url,'selected':false,'pinned':true,'index':0},function(tab){} );
+}
+
 function monitorByXMLHttpRequest(url){
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET",url , true);
@@ -88,6 +104,24 @@ function monitorByXMLHttpRequest(url){
 	}
 	xhr.send();
 }
+
+function monitorByBrowser(){
+
+	var url=getAWebToMonitor();
+	if(url==null){
+		console.log('no web to be monitor now!');
+		window.setTimeout(monitor, monitorTime);
+		return;
+	}
+	chrome.tabs.get(tabId, function(tab){
+		if(tab!=undefined){
+			chrome.tabs.update(tab.id,{'url':url});
+		}else{
+			initMonitorByBrowser(url);
+		}
+	});
+}
+
 var currentIndex=0;
 function getSizeOfObject(obj){
 	var size=0;
@@ -111,7 +145,7 @@ function getAWebToMonitor(){
 	if(size==0){
 		return null;
 	}else{
-		currentIndex=currentIndex%size;
+		currentIndex=currentIndex%(size-1);
 		var aweb= getObjectAttrByIndex(monitorInfos,currentIndex);
 		currentIndex++;
 		console.log("currentIndex:"+currentIndex);
@@ -119,6 +153,16 @@ function getAWebToMonitor(){
 	}
 }
 
-window.setTimeout(monitor, monitorTime);
+//window.setTimeout(monitor, monitorTime);
+chrome.storage.local.set({'value': {}}, function() {
+	chrome.storage.local.get('value', function(valueArray) {
+		valueArray.value.aa='b';
+        
+        chrome.storage.local.get('value', function(valueArray) {
+            alert(valueArray.value.aa);    
+    });
+});
+});
+
 
 
